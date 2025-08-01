@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase/client'
 import { NextRequest } from 'next/server'
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   const { data, error } = await supabase
     .from('events')
     .select('*')

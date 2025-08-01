@@ -1,5 +1,3 @@
-// src/app/page.tsx
-
 "use client";
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
@@ -29,8 +27,13 @@ export default function HomePage() {
         } else {
           throw new Error(json.error || 'An unknown error occurred');
         }
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) { // Changed 'err: any' to just 'err'
+        // Type assertion to treat err as an Error object
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       } finally {
         setLoading(false);
       }
@@ -45,14 +48,14 @@ export default function HomePage() {
     setShowModal(true);
   };
 
-  if (!isLoaded || loading) {
+  if (!isLoaded || (isSignedIn && loading)) {
     return <div className="p-6 text-center">Loading...</div>;
   }
   if (error) {
     return <div className="p-6 text-center text-red-500">Error: {error}</div>;
   }
   if (!isSignedIn) {
-    return <div className="p-6 text-center">You must be signed in to view events.</div>;
+     return <div className="p-6 text-center">Please sign in to view events.</div>;
   }
 
   return (

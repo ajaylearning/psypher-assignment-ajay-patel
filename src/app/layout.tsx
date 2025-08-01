@@ -9,6 +9,7 @@ import {
 } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import Link from 'next/link'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,9 +39,9 @@ export default function RootLayout({
           {/* Added sticky positioning and responsive padding */}
           <header className="sticky top-0 z-50 flex justify-between items-center p-4 sm:px-6 lg:px-8 h-16 border-b border-gray-200 bg-white shadow-sm w-full">
             {/* Made the title a link to the homepage */}
-            <a href="/" className="text-md sm:text-lg font-bold text-slate-800 hover:text-indigo-600 transition-colors">
+            <Link href="/" className="text-md sm:text-lg font-bold text-slate-800 hover:text-indigo-600 transition-colors">
               Psypher Task: Tier-Based Event Showcase
-            </a>
+            </Link>
             <div className="flex items-center gap-4">
               <SignedOut>
                 <SignInButton>

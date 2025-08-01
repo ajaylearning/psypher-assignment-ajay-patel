@@ -17,6 +17,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event, locked, onUpgradeCl
     <img
       src={event.image_url}
       alt={event.title}
+      width={400}
+      height={200}
       className="w-full h-44 object-cover"
     />
     <div className="p-5 flex flex-col gap-2 flex-1">
