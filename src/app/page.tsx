@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { UpgradeModal } from "@/components/events/UpgradeModal";
 import { EventsGrid } from "@/components/events/EventGrid";
+import { EventFilters } from "@/components/events/EventFilters"; // Import the new component
 import { type Event, type Tier } from "@/lib/supabase/types";
 
 export default function HomePage() {
@@ -12,6 +13,7 @@ export default function HomePage() {
   const [selectedTier, setSelectedTier] = useState<Tier | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<Tier | "all">("all"); // State for the filter
 
   const currentTier: Tier = (user?.unsafeMetadata?.tier as Tier) || "free";
 
@@ -19,7 +21,8 @@ export default function HomePage() {
     async function fetchEvents() {
       try {
         setLoading(true);
-        const res = await fetch("/api/events");
+        // Pass the active filter to the API
+        const res = await fetch(`/api/events?tier=${activeFilter}`);
         if (!res.ok) throw new Error('Failed to fetch events');
         const json = await res.json();
         if (json.success) {
@@ -27,8 +30,7 @@ export default function HomePage() {
         } else {
           throw new Error(json.error || 'An unknown error occurred');
         }
-      } catch (err) { // Changed 'err: any' to just 'err'
-        // Type assertion to treat err as an Error object
+      } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
         } else {
@@ -41,18 +43,15 @@ export default function HomePage() {
     if (isSignedIn) {
       fetchEvents();
     }
-  }, [isSignedIn]);
+  }, [isSignedIn, activeFilter]); // Re-fetch when the filter changes
 
   const handleLockedEventClick = (eventTier: Tier) => {
     setSelectedTier(eventTier);
     setShowModal(true);
   };
 
-  if (!isLoaded || (isSignedIn && loading)) {
+  if (!isLoaded) {
     return <div className="p-6 text-center">Loading...</div>;
-  }
-  if (error) {
-    return <div className="p-6 text-center text-red-500">Error: {error}</div>;
   }
   if (!isSignedIn) {
      return <div className="p-6 text-center">Please sign in to view events.</div>;
@@ -60,12 +59,36 @@ export default function HomePage() {
 
   return (
     <>
-      <main className="min-h-screen bg-gray-50 py-8 px-4">
-        <EventsGrid
-          events={events}
-          currentTier={currentTier}
-          onLockedEventClick={handleLockedEventClick}
-        />
+      {/* Main layout changed to a responsive grid */}
+      <main className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8 p-4 sm:p-8">
+        {/* Sidebar for filters */}
+        <aside className="relative hidden md:block">
+          <div className="sticky top-24"> {/* Adjust top value based on header height */}
+            <h2 className="text-lg font-semibold mb-4 text-slate-800">Filter by Tier</h2>
+            <EventFilters selectedTier={activeFilter} onSelectTier={setActiveFilter} />
+          </div>
+        </aside>
+
+        {/* Main content area */}
+        <div>
+          {/* Filters for mobile view */}
+          <div className="md:hidden mb-8">
+            <EventFilters selectedTier={activeFilter} onSelectTier={setActiveFilter} />
+          </div>
+          
+          {loading ? (
+            <div className="text-center pt-16">Loading events...</div>
+          ) : error ? (
+            <div className="text-center pt-16 text-red-500">Error: {error}</div>
+          ) : (
+            <EventsGrid
+              events={events}
+              currentTier={currentTier}
+              onLockedEventClick={handleLockedEventClick}
+            />
+          )}
+        </div>
+
         <UpgradeModal
           open={showModal}
           onClose={() => setShowModal(false)}
