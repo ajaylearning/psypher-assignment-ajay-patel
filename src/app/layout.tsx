@@ -38,7 +38,7 @@ export default function RootLayout({
 
           <footer className="w-full bg-white border-t border-gray-200 p-4 text-center">
             <p className="text-sm text-slate-600">
-              Developed by Ajay Patel | <a href="mailto:xyz@example.com" className="text-indigo-600 hover:underline">xyz@example.com</a>
+              Developed by Ajay Patel | <a href="mailto:ajaypatel4166@gmail.com" className="text-indigo-600 hover:underline">ajaypatel4166@gmail.com</a>
             </p>
           </footer>
         </body>
