@@ -72,7 +72,7 @@ export default function HomePage() {
         {/* Main content area */}
         <div>
           {/* Filters for mobile view */}
-          <div className="md:hidden mb-8">
+          <div className="md:hidden sticky top-16 z-40 bg-slate-50/95 backdrop-blur-sm p-4 border-b border-slate-200">
             <EventFilters selectedTier={activeFilter} onSelectTier={setActiveFilter} />
           </div>
           
